@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Paper = require('../Extra Schemas/paperSchema');
+const Hall = require('../Extra Schemas/hallSchema');
 
 module.exports = mongoose.model('Exam', mongoose.Schema({
     name: {type: String, required: true},
@@ -9,10 +10,9 @@ module.exports = mongoose.model('Exam', mongoose.Schema({
     stream: {type: String, required: true},
     regulation: {type: String, required: true},
     semester: {type: String, required: true},
-    startingTime: {type: Number, required: true},
-    endingTime: {type: Number, required: true},
-    updatedBy: {type: String, required: true},
-    updateTime: {type: String, required: true},
-    regularCandidates: {type: Map, of: Boolean, required: false},
-    backlogCandidates: {type: Map, of: Boolean, required: false}
+    examStartingTime: {type: Number, required: true},
+    examEndingTime: {type: Number, required: true},
+    attendanceStartingTime: {type: Number, required: true},
+    attendanceEndingTime: {type: Number, required: true},
+    halls: {type: Array, of: Hall, require: false}
 }));

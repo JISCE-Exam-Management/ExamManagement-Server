@@ -15,6 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/admin', require('./Routers/adminRoutes'));
+app.use('/user', require('./Routers/userRoutes'));
 app.use('/students', require('./Routers/studentsRouter'));
 app.use('/exams', require('./Routers/examRoutes'));
 app.use('/degrees', require('./Routers/degreeRoutes'));

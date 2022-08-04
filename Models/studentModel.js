@@ -4,6 +4,8 @@ const Paper = require('../Extra Schemas/paperSchema');
 module.exports = mongoose.model('Student', mongoose.Schema({
     _id: {type: String, required: true},
     name: {type: String, required: true},
+    email: {type: String, required: true},
+    phone: {type: String, required: true},
     collegeId: {type: String, required: true},
     univRoll: {type: Number, required: true},
     univReg: {type: Number, required: true},

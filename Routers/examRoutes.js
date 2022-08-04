@@ -5,7 +5,7 @@ const Student = require('../Models/studentModel');
 
 router.get('/all', async(req, res) => {
     try {
-        res.status(200).json((await Exam.find(req.body)).sort());
+        res.status(200).json((await Exam.find(req.body)).sort((a,b)=> a.startingTime - b.startingTime));
     } catch (error) {
         res.status(400).send(error);
     }
@@ -14,7 +14,7 @@ router.get('/all', async(req, res) => {
 router.get('/ongoing', async(req, res) => {
     try {
         const currentTime = Date.now();
-        res.status(200).json((await Exam.find({$and: [{startingTime: {$lte: currentTime}}, {endingTime: {$gte: currentTime}}]})).sort());
+        res.status(200).json((await Exam.find({$and: [{startingTime: {$lte: currentTime}}, {endingTime: {$gte: currentTime}}]})).sort((a,b)=> a.startingTime - b.startingTime));
     } catch (error) {
         res.status(400).send(error);
     }
@@ -30,40 +30,38 @@ router.get('/:id', async(req, res) => {
 
 router.post('/candidates', async(req, res) => {
     try {
-        res.status(200).json((await Student.find({ _id: {$in: req.body.candidates}})).sort((a, b) => parseInt(a.univRoll) - parseInt(b.univRoll)));
-    } catch (error) {
-        res.status(400).send(error);
-    } 
-});
-
-router.post('/candidates/range', async(req, res) => {
-    try {
-        res.status(200).json((await Student.find({$and: [{_id: {$in: req.body.candidates}}, {univRoll: {$gte: req.body.startingRoll, $lte: req.body.endingRoll}}]})).sort((a, b) => parseInt(a.univRoll) - parseInt(b.univRoll)));
+        res.status(200).json(await Student.find({$or: [{ regularPapers: { $elemMatch: req.body.paper}}, { backlogPapers: { $elemMatch: req.body.paper}}]}));
     } catch (error) {
         res.status(400).send(error);
     }
 });
 
-router.post('/add', async(req, res) => {
+router.post('/add/single', async(req, res) => {
     try {
-        const exam = new Exam(req.body);
-        exam.regularCandidates = new Map();
-        (await Student.find({ regularPapers: { $elemMatch: { code: exam.paper.code, name: exam.paper.name }}})).forEach((student)=> {
-            exam.regularCandidates.set(student._id, undefined);
-        });
-        exam.backlogCandidates = new Map();
-        (await Student.find({ backlogPapers: { $elemMatch: { code: exam.paper.code, name: exam.paper.name }}})).forEach((student)=> {
-            exam.backlogCandidates.set(student._id, undefined);
-        });
-        exam.updateTime = Date.now().toString();
-        res.status(200).json(await exam.save());
+        res.status(200).json(await new Exam(req.body).save());
     } catch (error) {
-        console.log(error);
         res.status(400).send(error);
     }
 });
 
-router.post('/students/attendance', async(req, res) => {
+router.post('/add/multiple', async (req, res) => {
+    try {
+        await Exam.insertMany(req.body.exams);
+        res.status(200).json(await Exam.find().sort((a,b)=> a.startingTime - b.startingTime));
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
+router.post('/add/hall', async (req, res) => {
+    try {
+        res.status(200).json(await Exam.findByIdAndUpdate(req.body.exam, {$push: {halls: req.body.hall}}, {new: true}));
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
+router.post('/attendance', async(req, res) => {
     try {
         
     } catch (error) {
@@ -73,16 +71,7 @@ router.post('/students/attendance', async(req, res) => {
 
 router.patch('/update/:id', async(req, res) => {
     try {
-        const exam = await Exam.findByIdAndUpdate(req.params.id, req.body, {new: true});
-        (await Student.find({ regularPapers: { $elemMatch: { code: exam.paper.code, name: exam.paper.name }}})).forEach((student)=> {
-            exam.regularCandidates.set(student._id, undefined);
-        });
-        (await Student.find({ backlogPapers: { $elemMatch: { code: exam.paper.code, name: exam.paper.name }}})).forEach((student)=> {
-            exam.backlogCandidates.set(student._id, undefined);
-        });
-        exam.updateTime = Date.now().toString();
-        res.status(200).json(await exam.save());
-        console.log(exam);
+        res.status(200).json(await Exam.findByIdAndUpdate(req.params.id, req.body, {new: true}));
     } catch (error) {
         res.status(400).send(error);
     }
