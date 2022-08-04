@@ -14,7 +14,7 @@ router.get('/all', async(req, res) => {
 router.get('/ongoing', async(req, res) => {
     try {
         const currentTime = Date.now();
-        res.status(200).json((await Exam.find({$and: [{startingTime: {$lte: currentTime}}, {endingTime: {$gte: currentTime}}]})).sort((a,b)=> a.startingTime - b.startingTime));
+        res.status(200).json((await Exam.find({$and: [{examStartingTime: {$lte: currentTime}}, {examEndingTime: {$gte: currentTime}}]})).sort((a,b)=> a.startingTime - b.startingTime));
     } catch (error) {
         res.status(400).send(error);
     }
