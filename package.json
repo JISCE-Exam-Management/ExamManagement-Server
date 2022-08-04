@@ -1,0 +1,21 @@
+{
+  "name": "exammanagement",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "author": "Prasun Sarkar",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mongodb": "^4.7.0",
+    "mongoose": "^6.4.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
