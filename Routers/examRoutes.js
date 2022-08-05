@@ -36,6 +36,14 @@ router.post('/candidates', async(req, res) => {
     }
 });
 
+router.post('/hall/candidates', async(req, res) => {
+    try {
+        res.status(200).json(await Student.find({_id: {$in: req.body.candidates}}));
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
 router.post('/add/single', async(req, res) => {
     try {
         res.status(200).json(await new Exam(req.body).save());
@@ -55,7 +63,7 @@ router.post('/add/multiple', async (req, res) => {
 
 router.post('/add/hall', async (req, res) => {
     try {
-        res.status(200).json(await Exam.findByIdAndUpdate(req.body.exam, {$push: {halls: req.body.hall}}, {new: true}));
+        res.status(200).json(await Exam.findByIdAndUpdate(req.body.exam, {$push: {halls: {$each: [req.body.hall], $sort: {name: 1}}}}, {new: true}));
     } catch (error) {
         res.status(400).send(error);
     }
