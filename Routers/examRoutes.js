@@ -95,7 +95,7 @@ router.patch('/update', async(req, res) => {
 
 router.delete('/delete/hall', async(req, res) => {
     try {
-        res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$pull: {halls: {_id: req.body.hall._id}}}, {new: true}));
+        res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$pull: {halls: {_id: req.body._id}}}, {new: true}));
     } catch (error) {
         res.status(400).send(error);
     }
