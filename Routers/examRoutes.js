@@ -20,9 +20,9 @@ router.get('/ongoing', async(req, res) => {
     }
 });
 
-router.get('/:id', async(req, res) => {
+router.get('/', async(req, res) => {
     try {
-        res.status(200).json(await Exam.findById(req.params.id));
+        res.status(200).json(await Exam.findById(req.query.exam));
     } catch (error) {
         res.status(400).send(error);
     }
@@ -63,7 +63,7 @@ router.post('/add/multiple', async (req, res) => {
 
 router.post('/add/hall', async (req, res) => {
     try {
-        res.status(200).json(await Exam.findByIdAndUpdate(req.body.exam, {$push: {halls: {$each: [req.body.hall], $sort: {name: 1}}}}, {new: true}));
+        res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$push: {halls: {$each: [req.body], $sort: {name: 1}}}}, {new: true}));
     } catch (error) {
         res.status(400).send(error);
     }
@@ -77,17 +77,33 @@ router.post('/attendance', async(req, res) => {
     }
 });
 
-router.patch('/update/:id', async(req, res) => {
+router.patch('/update/hall', async(req, res) => {
     try {
-        res.status(200).json(await Exam.findByIdAndUpdate(req.params.id, req.body, {new: true}));
+        res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$addToSet: {"halls.$[e1]": req.body}}, {arrayFilters:[{"e1._id": req.body._id}], new: true}));
     } catch (error) {
         res.status(400).send(error);
     }
 });
 
-router.delete('/delete/:id', async(req, res) => {
+router.patch('/update', async(req, res) => {
     try {
-        res.status(200).json(await Exam.findByIdAndDelete(req.params.id));
+        res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, req.body, {new: true}));
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
+router.delete('/delete/hall', async(req, res) => {
+    try {
+        res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$pull: {halls: {_id: req.body.hall._id}}}, {new: true}));
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
+router.delete('/delete', async(req, res) => {
+    try {
+        res.status(200).json(await Exam.findByIdAndDelete(req.query.exam));
     } catch (error) {
         res.status(400).send(error);
     }
