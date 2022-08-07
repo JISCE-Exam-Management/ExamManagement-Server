@@ -75,21 +75,10 @@ router.post('/add/hall', async (req, res) => {
     }
 });
 
-router.post('/attendance', async(req, res) => {
-    try {
-        
-    } catch (error) {
-        res.status(400).send(error);
-    }
-});
-
 router.patch('/update/hall', async(req, res) => {
     try {
-        console.log(req.body);
-        console.log(req.body._id);
         res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$set: {"halls.$[e1]": req.body}}, {arrayFilters:[{"e1._id": req.body._id}], new: true}));
     } catch (error) {
-        console.log(error);
         res.status(400).send(error);
     }
 });
@@ -104,7 +93,7 @@ router.patch('/update', async(req, res) => {
 
 router.delete('/delete/hall', async(req, res) => {
     try {
-        res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$pull: {halls: {_id: req.body._id}}}, {new: true}));
+        res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$pull: {halls: {_id: req.query.hall}}}, {new: true}));
     } catch (error) {
         res.status(400).send(error);
     }
