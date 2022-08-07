@@ -30,7 +30,7 @@ router.get('/', async(req, res) => {
 
 router.post('/candidates', async(req, res) => {
     try {
-        res.status(200).json(await Student.find({$or: [{ regularPapers: { $elemMatch: req.body.paper}}, { backlogPapers: { $elemMatch: req.body.paper}}]}));
+        res.status(200).json((await Student.find({$or: [{ regularPapers: { $elemMatch: req.body.paper}}, { backlogPapers: { $elemMatch: req.body.paper}}]})).sort((a, b) => parseInt(a.univRoll) - parseInt(b.univRoll)));
     } catch (error) {
         res.status(400).send(error);
     }
@@ -38,7 +38,7 @@ router.post('/candidates', async(req, res) => {
 
 router.post('/hall/candidates', async(req, res) => {
     try {
-        res.status(200).json(await Student.find({_id: {$in: req.body.candidates}}));
+        res.status(200).json((await Student.find({_id: {$in: req.body.candidates}})).sort((a, b) => parseInt(a.univRoll) - parseInt(b.univRoll)));
     } catch (error) {
         res.status(400).send(error);
     }
