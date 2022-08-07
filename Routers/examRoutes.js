@@ -79,8 +79,11 @@ router.post('/attendance', async(req, res) => {
 
 router.patch('/update/hall', async(req, res) => {
     try {
-        res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$addToSet: {"halls.$[e1]": req.body}}, {arrayFilters:[{"e1._id": req.body._id}], new: true}));
+        console.log(req.body);
+        console.log(req.body._id);
+        res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$set: {"halls.$[e1]": req.body}}, {arrayFilters:[{"e1._id": req.body._id}], new: true}));
     } catch (error) {
+        console.log(error);
         res.status(400).send(error);
     }
 });
