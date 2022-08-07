@@ -30,7 +30,13 @@ router.get('/', async(req, res) => {
 
 router.post('/candidates', async(req, res) => {
     try {
-        res.status(200).json((await Student.find({$or: [{ regularPapers: { $elemMatch: req.body.paper}}, { backlogPapers: { $elemMatch: req.body.paper}}]})).sort((a, b) => parseInt(a.univRoll) - parseInt(b.univRoll)));
+        const exam = await Exam.findById(req.query.exam);
+        const studentIds = [];
+        exam.halls.forEach(hall => {
+            studentIds.push(...hall.candidates.keys());
+        });
+
+        res.status(200).json((await Student.find({$and: [{_id: {$nin: studentIds}}, {$or: [{ regularPapers: { $elemMatch: exam.paper}}, { backlogPapers: { $elemMatch: exam.paper}}]}]})).sort((a, b) => parseInt(a.univRoll) - parseInt(b.univRoll)));
     } catch (error) {
         res.status(400).send(error);
     }
