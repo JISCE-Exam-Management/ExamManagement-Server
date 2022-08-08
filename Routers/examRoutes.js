@@ -1,4 +1,5 @@
 const express = require('express');
+const { ObjectId } = require('mongodb');
 const router = express.Router();
 const Exam = require('../Models/examModel');
 const Student = require('../Models/studentModel');
@@ -69,7 +70,9 @@ router.post('/add/multiple', async (req, res) => {
 
 router.post('/add/hall', async (req, res) => {
     try {
-        res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$push: {halls: {$each: [req.body], $sort: {name: 1}}}}, {new: true}));
+        const hall = req.body;
+        hall._id = ObjectId();
+        res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$push: {halls: {$each: [hall], $sort: {name: 1}}}}, {new: true}));
     } catch (error) {
         res.status(400).send(error);
     }
@@ -77,8 +80,10 @@ router.post('/add/hall', async (req, res) => {
 
 router.patch('/update/hall', async(req, res) => {
     try {
+        console.log(req.body);
         res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$set: {"halls.$[e1]": req.body}}, {arrayFilters:[{"e1._id": req.body._id}], new: true}));
     } catch (error) {
+        console.error(error);
         res.status(400).send(error);
     }
 });
