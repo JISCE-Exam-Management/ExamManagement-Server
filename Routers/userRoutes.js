@@ -4,15 +4,15 @@ const User = require('../Models/userModel');
 
 router.get('/all', async(req, res)=> {
     try {
-        res.status(200).json((await User.find()).sort((a,b) => a.verified - b.verified));
+        res.status(200).json((await User.find(req.body, {password: 0})).sort((a,b) => a.verified - b.verified));
     } catch (error) {
         res.status(400).send(error);
     }
 });
 
-router.get('/:id', async(req, res)=> {
+router.get('/', async(req, res)=> {
     try {
-        res.status(200).json(await User.findById(req.params.id));
+        res.status(200).json(await User.findById(req.query.user, {password: 0}));
     } catch (error) {
         res.status(400).send(error);
     }
@@ -41,17 +41,17 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.patch('/update/:id', async(req, res)=> {
+router.patch('/update', async(req, res)=> {
     try {
-        res.status(200).json(await User.findByIdAndUpdate(req.params.id, req.body, {new: true}));
+        res.status(200).json(await User.findByIdAndUpdate(req.query.user, req.body, {new: true}));
     } catch (error) {
         res.status(400).send(error);
     }
 });
 
-router.delete('/delete/:id', async(req, res)=> {
+router.delete('/delete', async(req, res)=> {
     try {
-        res.status(200).json(await User.findByIdAndDelete(req.params.id));
+        res.status(200).json(await User.findByIdAndDelete(req.query.user));
     } catch (error) {
         res.status(400).send(error);
     }

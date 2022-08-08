@@ -10,9 +10,9 @@ router.get('/all', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        res.status(200).json(await Student.findById(req.params.id));
+        res.status(200).json(await Student.findById(req.query.student));
     } catch (error) {
         res.status(400).send(error);
     }
@@ -35,17 +35,17 @@ router.post('/add/multiple', async (req, res) => {
     }
 });
 
-router.patch('/update/:id', async (req, res) => {
+router.patch('/update', async (req, res) => {
     try {
-        res.status(200).json(await Student.findByIdAndUpdate(req.params.id, req.body, {new: true}));
+        res.status(200).json(await Student.findByIdAndUpdate(req.query.student, req.body, {new: true}));
     } catch (error) {
         res.status(400).send(error);
     }
 });
 
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/delete', async (req, res) => {
     try {
-        res.status(200).send(await Student.findByIdAndDelete(req.params.id));
+        res.status(200).send(await Student.findByIdAndDelete(req.query.student));
     } catch (error) {
         res.status(400).send(error);
     }

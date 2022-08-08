@@ -10,9 +10,9 @@ router.get('/all', async(req, res) => {
     }
 });
 
-router.get('/:id', async(req, res) => {
+router.get('/', async(req, res) => {
     try {
-        res.status(200).json(await Degree.findById(req.params.id));
+        res.status(200).json(await Degree.findById(req.query.degree));
         await Degree.find()
     } catch (error) {
         res.status(400).send(error);
@@ -29,8 +29,8 @@ router.post('/add/degree', async(req, res) => {
 
 router.post('/add/course', async(req, res) => {
     try {
-        res.status(200).json(await Degree.findByIdAndUpdate(req.body.degree, 
-            {$push: {courses: {$each: [JSON.parse(req.body.course)], $sort: {courseName: 1}}}}, {new: true}));
+        res.status(200).json(await Degree.findByIdAndUpdate(req.query.degree, 
+            {$push: {courses: {$each: [req.body], $sort: {courseName: 1}}}}, {new: true}));
     } catch (error) {
         res.status(400).send(error);
     }
@@ -38,9 +38,9 @@ router.post('/add/course', async(req, res) => {
 
 router.post('/add/stream', async(req, res) => {
     try {
-        res.status(200).json(await Degree.findByIdAndUpdate(req.body.degree, 
-            {$push: {"courses.$[e1].streams": {$each: [JSON.parse(req.body.stream)], $sort: {streamName: 1}}}}, 
-            {arrayFilters:[{"e1._id": req.body.course}], new: true}));
+        res.status(200).json(await Degree.findByIdAndUpdate(req.query.degree, 
+            {$push: {"courses.$[e1].streams": {$each: [req.body], $sort: {streamName: 1}}}}, 
+            {arrayFilters:[{"e1._id": req.query.course}], new: true}));
     } catch (error) {
         res.status(400).send(error);
     }
@@ -48,9 +48,9 @@ router.post('/add/stream', async(req, res) => {
 
 router.post('/add/regulation', async(req, res) => {
     try {
-        res.status(200).json(await Degree.findByIdAndUpdate(req.body.degree, 
-        {$push: {"courses.$[e1].streams.$[e2].regulations": {$each: [JSON.parse(req.body.regulation)], $sort: {regulationName: 1}}}}, 
-        {arrayFilters: [{"e1._id": req.body.course}, {"e2._id": req.body.stream}], new: true}));
+        res.status(200).json(await Degree.findByIdAndUpdate(req.query.degree, 
+        {$push: {"courses.$[e1].streams.$[e2].regulations": {$each: [req.body], $sort: {regulationName: 1}}}}, 
+        {arrayFilters: [{"e1._id": req.query.course}, {"e2._id": req.query.stream}], new: true}));
     } catch (error) {
         console.error(error);
         res.status(400).send(error);
@@ -59,9 +59,9 @@ router.post('/add/regulation', async(req, res) => {
 
 router.post('/add/semester', async(req, res) => {
     try {
-        res.status(200).json(await Degree.findByIdAndUpdate(req.body.degree, 
-        {$push: {"courses.$[e1].streams.$[e2].regulations.$[e3].semesters": {$each: [JSON.parse(req.body.semester)], $sort: {semesterName: 1}}}}, 
-        {arrayFilters: [{"e1._id": req.body.course}, {"e2._id": req.body.stream}, {"e3._id": req.body.regulation}], new: true}));
+        res.status(200).json(await Degree.findByIdAndUpdate(req.query.degree, 
+        {$push: {"courses.$[e1].streams.$[e2].regulations.$[e3].semesters": {$each: [req.body], $sort: {semesterName: 1}}}}, 
+        {arrayFilters: [{"e1._id": req.query.course}, {"e2._id": req.query.stream}, {"e3._id": req.query.regulation}], new: true}));
     } catch (error) {
         console.error(error);
         res.status(400).send(error);
@@ -70,26 +70,26 @@ router.post('/add/semester', async(req, res) => {
 
 router.post('/add/paper', async(req, res) => {
     try {
-        res.status(200).json(await Degree.findByIdAndUpdate(req.body.degree, 
-        {$push: {"courses.$[e1].streams.$[e2].regulations.$[e3].semesters.$[e4].papers": {$each: [JSON.parse(req.body.paper)], $sort: {code: 1}}}}, 
-        {arrayFilters: [{"e1._id": req.body.course}, {"e2._id": req.body.stream}, {"e3._id": req.body.regulation}, {"e4._id": req.body.semester}], new: true}));
+        res.status(200).json(await Degree.findByIdAndUpdate(req.query.degree, 
+        {$push: {"courses.$[e1].streams.$[e2].regulations.$[e3].semesters.$[e4].papers": {$each: [req.body], $sort: {code: 1}}}}, 
+        {arrayFilters: [{"e1._id": req.query.course}, {"e2._id": req.query.stream}, {"e3._id": req.query.regulation}, {"e4._id": req.query.semester}], new: true}));
     } catch (error) {
         console.error(error);
         res.status(400).send(error);
     }
 });
 
-router.patch('/update/:id', async(req, res) => {
+router.patch('/update', async(req, res) => {
     try {
-        res.status(200).json(await Degree.findByIdAndUpdate(req.params.id, req.body, {new: true}));
+        res.status(200).json(await Degree.findByIdAndUpdate(req.query.degree, req.body, {new: true}));
     } catch (error) {
         res.status(400).send(error);
     }
 });
 
-router.delete('/delete/:id', async(req, res) => {
+router.delete('/delete', async(req, res) => {
     try {
-        res.status(200).json(await Degree.findByIdAndDelete(req.params.id))
+        res.status(200).json(await Degree.findByIdAndDelete(req.query.degree))
     } catch (error) {
         res.status(400).send(error);
     }
