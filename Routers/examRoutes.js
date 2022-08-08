@@ -80,10 +80,8 @@ router.post('/add/hall', async (req, res) => {
 
 router.patch('/update/hall', async(req, res) => {
     try {
-        console.log(req.body);
         res.status(200).json(await Exam.findByIdAndUpdate(req.query.exam, {$set: {"halls.$[e1]": req.body}}, {arrayFilters:[{"e1._id": req.body._id}], new: true}));
     } catch (error) {
-        console.error(error);
         res.status(400).send(error);
     }
 });
