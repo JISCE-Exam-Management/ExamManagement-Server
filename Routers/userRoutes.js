@@ -39,7 +39,7 @@ router.post('/login', async (req, res) => {
             } else throw new Error("Incorrect password!");
         } else throw new Error("No user found!");
     } catch (err) {
-        res.status(400).json(err);
+        res.status(400).json({message: err.message});
     }
 });
 
