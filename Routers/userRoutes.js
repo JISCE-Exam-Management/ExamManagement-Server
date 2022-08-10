@@ -1,21 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../Models/userModel');
-const BaseError = require('../Helpers/errors');
+const ResponseCodes = require('../Helpers/responseCodes');
+const BaseError = require('../Helpers/errors').default;
 
 router.get('/all', async(req, res)=> {
     try {
-        res.status(200).json((await User.find(req.body, {password: 0})).sort((a,b) => a.verified - b.verified));
+        res.status(ResponseCodes.OK).json((await User.find(req.body, {password: 0})).sort((a,b) => a.verified - b.verified));
     } catch (error) {
-        res.status(400).send(error);
+        res.status(ResponseCodes.BAD_REQUEST).send(error);
     }
 });
 
 router.get('/', async(req, res)=> {
     try {
-        res.status(200).json(await User.findById(req.query.user, {password: 0}));
+        res.status(ResponseCodes.OK).json(await User.findById(req.query.user, {password: 0}));
     } catch (error) {
-        res.status(400).send(error);
+        res.status(ResponseCodes.BAD_REQUEST).send(error);
     }
 });
 
@@ -23,9 +24,9 @@ router.post('/signup', async (req, res) => {
     try {
         const user = await User.findOne({email: req.body.email});
         if (user) throw new BaseError("User already exists with this email!");
-        else res.status(200).json(await new User(req.body).save());
+        else res.status(ResponseCodes.OK).json(await new User(req.body).save());
     } catch (err) {
-        res.status(400).send(err);
+        res.status(ResponseCodes.BAD_REQUEST).send(err);
     }
 });
 
@@ -38,7 +39,7 @@ router.post('/login', async (req, res) => {
             } else throw new Error("Incorrect password!");
         } else throw new Error("No user found!");
     } catch (err) {
-        res.status(400).send(err);
+        res.status(400).send(err.message);
     }
 });
 

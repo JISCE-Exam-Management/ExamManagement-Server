@@ -1,4 +1,4 @@
-class BaseError extends Error {
+class ApiError extends Error {
     constructor(name, description="Bad Request", statusCode=400, isOperational=true) {
         super(description);
 
@@ -10,4 +10,4 @@ class BaseError extends Error {
     }
 }
 
-module.exports = BaseError;
+export default ApiError;
