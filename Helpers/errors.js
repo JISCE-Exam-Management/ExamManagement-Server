@@ -1,5 +1,5 @@
 class BaseError extends Error {
-    constructor(name, description="Bad Request", statusCode=400, isOperational=true) {
+    constructor(name, description="Bad Request", statusCode=404, isOperational=true) {
         super(description);
 
         Object.setPrototypeOf(this, new.target.prototype);
