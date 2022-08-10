@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../Models/userModel');
-const BaseError = require('../Helpers/errors').default;
+const Error = require('../Helpers/errors').default;
 
 router.get('/all', async(req, res)=> {
     try {
@@ -22,7 +22,7 @@ router.get('/', async(req, res)=> {
 router.post('/signup', async (req, res) => {
     try {
         const user = await User.findOne({email: req.body.email});
-        if (user) throw new BaseError("User already exists with this email!");
+        if (user) throw new Error("User already exists with this email!");
         else res.status(200).json(await new User(req.body).save());
     } catch (err) {
         res.status(400).send(err);
@@ -38,7 +38,8 @@ router.post('/login', async (req, res) => {
             } else throw new Error("Incorrect password!");
         } else throw new Error("No user found!");
     } catch (err) {
-        res.status(400).send(err);
+        console.log(err);
+        res.status(400).send(err.message);
     }
 });
 
