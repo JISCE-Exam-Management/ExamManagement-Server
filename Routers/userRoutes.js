@@ -35,8 +35,8 @@ router.post('/login', async (req, res) => {
         if (user) {
             if (user.password === req.body.password) {
                 res.status(200).json(user);
-            } else throw new BaseError("Incorrect password!");
-        } else throw new BaseError("No user found!");
+            } else throw new Error("Incorrect password!");
+        } else throw new Error("No user found!");
     } catch (err) {
         res.status(400).send(err);
     }
