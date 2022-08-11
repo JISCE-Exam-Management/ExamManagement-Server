@@ -28,6 +28,7 @@ router.post('/add/single', async (req, res) => {
 
 router.post('/add/multiple', async (req, res) => {
     try {
+        console.log(req.body);
         await Student.insertMany(req.body.students);
         res.status(200).json(await Student.find());
     } catch (error) {
