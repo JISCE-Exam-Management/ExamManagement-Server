@@ -11,6 +11,7 @@ mongoose.connect(process.env.DB_URL, {useNewUrlParser:true, useUnifiedTopology: 
     }
 })
 
+app.use(require('cors'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
