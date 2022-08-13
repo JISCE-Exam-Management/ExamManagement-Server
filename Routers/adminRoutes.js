@@ -8,7 +8,7 @@ router.post('/signup', async (req, res) => {
         if (user) throw new Error("User already exists with this email!");
         else res.status(200).json(await new Admin(req.body).save());
     } catch (err) {
-        res.status(400).json(err);
+        res.status(400).send(err.message);
     }
 });
 
@@ -21,7 +21,7 @@ router.post('/login', async (req, res) => {
             } else throw new Error("Incorrect password!");
         } else throw new Error("No user found!");
     } catch (err) {
-        res.status(400).json(err);
+        res.status(400).send(err.message);
     }
 });
 
