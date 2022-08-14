@@ -21,6 +21,24 @@ router.get('/ongoing', async(req, res) => {
     }
 });
 
+router.get('/upcoming', async(req, res) => {
+    try {
+        const currentTime = Date.now();
+        res.status(200).json((await Exam.find({examStartingTime: {$gt: currentTime}})).sort((a,b)=> a.startingTime - b.startingTime));
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
+router.get('/completed', async(req, res) => {
+    try {
+        const currentTime = Date.now();
+        res.status(200).json((await Exam.find({examEndingTime: {$lt: currentTime}})).sort((a,b)=> a.startingTime - b.startingTime));
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
 router.get('/', async(req, res) => {
     try {
         res.status(200).json(await Exam.findById(req.query.exam));
