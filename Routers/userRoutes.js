@@ -42,6 +42,7 @@ router.post('/login', async (req, res) => {
 
 router.patch('/update', async(req, res)=> {
     try {
+        console.log(req.body);
         res.status(200).json(await User.findByIdAndUpdate(req.query.user, req.body, {new: true}));
     } catch (error) {
         res.status(400).send(error.message);
