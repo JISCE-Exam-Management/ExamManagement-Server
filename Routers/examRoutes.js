@@ -4,7 +4,7 @@ const router = express.Router();
 const Exam = require('../Models/examModel');
 const Student = require('../Models/studentModel');
 
-router.get('/all', async(req, res) => {
+router.get('/all', (req, res) => {
     Exam.find(req.body).then((value) => {
         res.status(200).json(value.sort((a,b)=> a.startingTime - b.startingTime));
     }).catch((error) => {
@@ -12,7 +12,7 @@ router.get('/all', async(req, res) => {
     });
 });
 
-router.get('/ongoing', async(req, res) => {
+router.get('/ongoing', (req, res) => {
     Exam.find({$and: [{examStartingTime: {$lte: currentTime}}, {examEndingTime: {$gte: currentTime}}]}).then((value) => {
         res.status(200).json(value.sort((a,b)=> a.startingTime - b.startingTime));
     }).catch((error) => {
@@ -20,7 +20,7 @@ router.get('/ongoing', async(req, res) => {
     });
 });
 
-router.get('/upcoming', async(req, res) => {
+router.get('/upcoming', (req, res) => {
     Exam.find({examStartingTime: {$gt: currentTime}}).then((value) => {
         res.status(200).json(value.sort((a,b)=> a.startingTime - b.startingTime));
     }).catch((error) => {
@@ -28,7 +28,7 @@ router.get('/upcoming', async(req, res) => {
     });
 });
 
-router.get('/completed', async(req, res) => {
+router.get('/completed', (req, res) => {
     Exam.find({examEndingTime: {$lt: currentTime}}).then((value) => {
         res.status(200).json(value.sort((a,b)=> a.startingTime - b.startingTime));
     }).catch((error) => {
@@ -36,7 +36,7 @@ router.get('/completed', async(req, res) => {
     });
 });
 
-router.get('/', async(req, res) => {
+router.get('/', (req, res) => {
     Exam.findById(req.query.exam).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
@@ -44,7 +44,7 @@ router.get('/', async(req, res) => {
     });
 });
 
-router.post('/candidates', async(req, res) => {
+router.post('/candidates', (req, res) => {
     Exam.findById(req.query.exam).then((exam) => {
         const studentIds = [];
         exam.halls.forEach((hall)=> studentIds.push(...hall.candidates.keys()));
@@ -58,7 +58,7 @@ router.post('/candidates', async(req, res) => {
     });
 });
 
-router.post('/hall/candidates', async(req, res) => {
+router.post('/hall/candidates', (req, res) => {
     Student.find({_id: {$in: req.body.candidates}}).then((value) => {
         res.status(200).json(value.sort((a, b)=> parseInt(a.univRoll) - parseInt(b.univRoll)));
     }).catch((error) => {
@@ -66,7 +66,7 @@ router.post('/hall/candidates', async(req, res) => {
     });
 });
 
-router.post('/insert', async (req, res) => {
+router.post('/insert', (req, res) => {
     Exam.insertMany(req.body.exams).then((value)=> {
         res.status(200).json(value);
     }).catch((error)=> {
@@ -74,7 +74,7 @@ router.post('/insert', async (req, res) => {
     });
 });
 
-router.post('/upsert', async (req, res) => {
+router.post('/upsert', (req, res) => {
     const operations = [];
     req.body.exams.forEach(e => {
         operations.push({
@@ -92,7 +92,7 @@ router.post('/upsert', async (req, res) => {
     });
 });
 
-router.post('/add/hall', async (req, res) => {
+router.post('/add/hall', (req, res) => {
     Exam.findByIdAndUpdate(req.query.exam, {$push: {halls: {$each: [req.body], $sort: {name: 1}}}}, {new: true}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
@@ -100,7 +100,7 @@ router.post('/add/hall', async (req, res) => {
     });
 });
 
-router.patch('/update/hall', async(req, res) => {
+router.patch('/update/hall', (req, res) => {
     Exam.findByIdAndUpdate(req.query.exam, {$set: {"halls.$[e1]": req.body}}, {arrayFilters:[{"e1._id": req.body._id}], new: true}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
@@ -108,7 +108,7 @@ router.patch('/update/hall', async(req, res) => {
     });
 });
 
-router.patch('/update', async(req, res) => {
+router.patch('/update', (req, res) => {
     Exam.findByIdAndUpdate(req.query.exam, req.body, {new: true}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
@@ -116,7 +116,7 @@ router.patch('/update', async(req, res) => {
     });
 });
 
-router.delete('/delete/hall', async(req, res) => {
+router.delete('/delete/hall', (req, res) => {
     Exam.findByIdAndUpdate(req.query.exam, {$pull: {halls: {_id: req.query.hall}}}, {new: true}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
@@ -124,7 +124,7 @@ router.delete('/delete/hall', async(req, res) => {
     });
 });
 
-router.delete('/delete', async(req, res) => {
+router.delete('/delete', (req, res) => {
     Exam.findByIdAndDelete(req.query.exam).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {

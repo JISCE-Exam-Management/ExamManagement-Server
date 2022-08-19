@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Student = require('../Models/studentModel');
 
-router.get('/all', async (req, res) => {
+router.get('/all', (req, res) => {
     Student.find(req.body).then((value) => {
         res.status(200).json(value.sort((a, b) => parseInt(a.univRoll) - parseInt(b.univRoll)));
     }).catch((error) => {
@@ -10,7 +10,7 @@ router.get('/all', async (req, res) => {
     });
 });
 
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
     Student.findById(req.query.student).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
@@ -18,16 +18,15 @@ router.get('/', async (req, res) => {
     });
 });
 
-router.post('/insert', async (req, res) => {
-    try {
-        await Student.insertMany(req.body.students);
-        res.status(200).json(await Student.find());
-    } catch (error) {
+router.post('/insert', (req, res) => {
+    Student.insertMany(req.body.students).then((value) => {
+        res.status(200).json(value);
+    }).catch((error) => {
         res.status(400).send(error);
-    }
+    });
 });
 
-router.post('/upsert', async (req, res) => {
+router.post('/upsert', (req, res) => {
     const operations = [];
     req.body.students.forEach(s => {
         operations.push({
@@ -45,7 +44,7 @@ router.post('/upsert', async (req, res) => {
     });
 });
 
-router.patch('/update', async (req, res) => {
+router.patch('/update', (req, res) => {
     Student.findByIdAndUpdate(req.query.student, req.body, { new: true }).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
@@ -53,7 +52,7 @@ router.patch('/update', async (req, res) => {
     });
 });
 
-router.delete('/delete', async (req, res) => {
+router.delete('/delete', (req, res) => {
     Student.findByIdAndDelete(req.query.student).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {

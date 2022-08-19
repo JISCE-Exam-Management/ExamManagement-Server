@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Admin = require('../Models/adminModel')
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', (req, res) => {
     Admin.findOne({email: req.body.email}).then((user) => {
         if (user) throw new Error("User already exists with this email!");
         else new Admin(req.body).save().then((value) => {
@@ -15,7 +15,7 @@ router.post('/signup', async (req, res) => {
     });
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', (req, res) => {
     Admin.findOne({email: req.body.email}).then((user) => {
         if (user) {
             if (user.password === req.body.password) {

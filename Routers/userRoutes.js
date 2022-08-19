@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../Models/userModel');
 
-router.get('/all', async(req, res)=> {
+router.get('/all', (req, res)=> {
     User.find(req.body, {password: 0}).then((value) => {
         res.status(200).json(value.sort((a,b) => a.verified - b.verified));
     }).catch((error) => {
@@ -10,7 +10,7 @@ router.get('/all', async(req, res)=> {
     });
 });
 
-router.get('/', async(req, res)=> {
+router.get('/', (req, res)=> {
     User.findById(req.query.user, {password: 0}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
@@ -18,7 +18,7 @@ router.get('/', async(req, res)=> {
     });
 });
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', (req, res) => {
     User.findOne({email: req.body.email}).then((value) => {
         if (value) throw new Error("User already exists with this email!");
         else new User(req.body).save().then((value) => {
@@ -31,7 +31,7 @@ router.post('/signup', async (req, res) => {
     });
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', (req, res) => {
     User.findOne({email: req.body.email}).then((value) => {
         if (value) {
             if (value.password === req.body.password) res.status(200).json(value); 
@@ -42,7 +42,7 @@ router.post('/login', async (req, res) => {
     });
 });
 
-router.patch('/update', async(req, res)=> {
+router.patch('/update', (req, res)=> {
     User.findByIdAndUpdate(req.query.user, req.body, {new: true}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
@@ -50,7 +50,7 @@ router.patch('/update', async(req, res)=> {
     });
 });
 
-router.delete('/delete', async(req, res)=> {
+router.delete('/delete', (req, res)=> {
     User.findByIdAndDelete(req.query.user).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
