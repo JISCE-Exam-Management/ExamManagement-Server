@@ -38,7 +38,16 @@ router.post('/upsert', (req, res) => {
         });
     });
     Student.collection.bulkWrite(operations).then((value) => {
+        console.log(value);
         res.status(200).json(value);
+    }).catch((error) => {
+        res.status(400).send(error);
+    });
+});
+
+router.post('/in', (req, res) => {
+    Student.find({_id: {$in: req.body.students}}).then((value) => {
+        res.status(200).json(value.sort((a, b)=> parseInt(a.univRoll) - parseInt(b.univRoll)));
     }).catch((error) => {
         res.status(400).send(error);
     });

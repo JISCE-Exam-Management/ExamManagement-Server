@@ -1,12 +1,11 @@
 const express = require('express');
-const { ObjectId } = require('mongodb');
 const router = express.Router();
 const Exam = require('../Models/examModel');
 const Student = require('../Models/studentModel');
 
 router.get('/all', (req, res) => {
     Exam.find(req.body).then((value) => {
-        res.status(200).json(value.sort((a,b)=> a.startingTime - b.startingTime));
+        res.status(200).json(value.sort((a,b)=> b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
         res.status(400).send(error);
     });
@@ -14,7 +13,7 @@ router.get('/all', (req, res) => {
 
 router.get('/ongoing', (req, res) => {
     Exam.find({$and: [{examStartingTime: {$lte: currentTime}}, {examEndingTime: {$gte: currentTime}}]}).then((value) => {
-        res.status(200).json(value.sort((a,b)=> a.startingTime - b.startingTime));
+        res.status(200).json(value.sort((a,b)=> b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
         res.status(400).send(error);
     });
@@ -22,7 +21,7 @@ router.get('/ongoing', (req, res) => {
 
 router.get('/upcoming', (req, res) => {
     Exam.find({examStartingTime: {$gt: currentTime}}).then((value) => {
-        res.status(200).json(value.sort((a,b)=> a.startingTime - b.startingTime));
+        res.status(200).json(value.sort((a,b)=> b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
         res.status(400).send(error);
     });
@@ -30,7 +29,7 @@ router.get('/upcoming', (req, res) => {
 
 router.get('/completed', (req, res) => {
     Exam.find({examEndingTime: {$lt: currentTime}}).then((value) => {
-        res.status(200).json(value.sort((a,b)=> a.startingTime - b.startingTime));
+        res.status(200).json(value.sort((a,b)=> b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
         res.status(400).send(error);
     });
@@ -58,18 +57,13 @@ router.post('/candidates', (req, res) => {
     });
 });
 
-router.post('/hall/candidates', (req, res) => {
-    Student.find({_id: {$in: req.body.candidates}}).then((value) => {
-        res.status(200).json(value.sort((a, b)=> parseInt(a.univRoll) - parseInt(b.univRoll)));
-    }).catch((error) => {
-        res.status(400).send(error);
-    });
-});
-
 router.post('/insert', (req, res) => {
+    console.log(req.body);
+    console.log(req.body.exams);
     Exam.insertMany(req.body.exams).then((value)=> {
         res.status(200).json(value);
     }).catch((error)=> {
+        console.log(error);
         res.status(400).send(error);
     });
 });
