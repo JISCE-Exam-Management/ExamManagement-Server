@@ -5,7 +5,7 @@ const Student = require('../Models/studentModel');
 
 router.get('/all', (req, res) => {
     Exam.find(req.body).then((value) => {
-        res.status(200).json(value.sort((a,b)=> b.examStartingTime - a.examStartingTime));
+        res.status(200).json(value.sort((a, b) => b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
         res.status(400).send(error);
     });
@@ -13,7 +13,7 @@ router.get('/all', (req, res) => {
 
 router.get('/ongoing', (req, res) => {
     Exam.find({$and: [{examStartingTime: {$lte: currentTime}}, {examEndingTime: {$gte: currentTime}}]}).then((value) => {
-        res.status(200).json(value.sort((a,b)=> b.examStartingTime - a.examStartingTime));
+        res.status(200).json(value.sort((a, b) => b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
         res.status(400).send(error);
     });
@@ -21,7 +21,7 @@ router.get('/ongoing', (req, res) => {
 
 router.get('/upcoming', (req, res) => {
     Exam.find({examStartingTime: {$gt: currentTime}}).then((value) => {
-        res.status(200).json(value.sort((a,b)=> b.examStartingTime - a.examStartingTime));
+        res.status(200).json(value.sort((a, b) => b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
         res.status(400).send(error);
     });
@@ -29,7 +29,21 @@ router.get('/upcoming', (req, res) => {
 
 router.get('/completed', (req, res) => {
     Exam.find({examEndingTime: {$lt: currentTime}}).then((value) => {
-        res.status(200).json(value.sort((a,b)=> b.examStartingTime - a.examStartingTime));
+        res.status(200).json(value.sort((a, b) => b.examStartingTime - a.examStartingTime));
+    }).catch((error) => {
+        res.status(400).send(error);
+    });
+});
+
+router.get('/candidates', (req, res) => {
+    Exam.findById(req.query.exam).then((exam) => {
+        const studentIds = [];
+        exam.halls.forEach((hall) => studentIds.push(...hall.candidates.keys()));
+        Student.find({$and: [{_id: {$nin: studentIds}}, {$or: [{regularPapers: {$elemMatch: exam.paper}}, {backlogPapers: {$elemMatch: exam.paper}}]}]}).then((value) => {
+            res.status(200).json(value.sort((a, b) => parseInt(a.univRoll) - parseInt(b.univRoll)));
+        }).catch((error) => {
+            res.status(400).send(error);
+        });
     }).catch((error) => {
         res.status(400).send(error);
     });
@@ -43,26 +57,12 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/candidates', (req, res) => {
-    Exam.findById(req.query.exam).then((exam) => {
-        const studentIds = [];
-        exam.halls.forEach((hall)=> studentIds.push(...hall.candidates.keys()));
-        Student.find({$and: [{_id: {$nin: studentIds}}, {$or: [{ regularPapers: { $elemMatch: exam.paper}}, { backlogPapers: { $elemMatch: exam.paper}}]}]}).then((value) => {
-            res.status(200).json(value.sort((a, b) => parseInt(a.univRoll) - parseInt(b.univRoll)));
-        }).catch((error) => {
-            res.status(400).send(error);
-        });
-    }).catch((error) => {
-        res.status(400).send(error);
-    });
-});
-
 router.post('/insert', (req, res) => {
     console.log(req.body);
     console.log(req.body.exams);
-    Exam.insertMany(req.body.exams).then((value)=> {
+    Exam.insertMany(req.body.exams).then((value) => {
         res.status(200).json(value);
-    }).catch((error)=> {
+    }).catch((error) => {
         console.log(error);
         res.status(400).send(error);
     });
@@ -73,8 +73,8 @@ router.post('/upsert', (req, res) => {
     req.body.exams.forEach(e => {
         operations.push({
             updateOne: {
-                filter: { name: e.name },
-                update: { $set: e },
+                filter: {name: e.name},
+                update: {$set: e},
                 upsert: true
             }
         });
@@ -86,16 +86,26 @@ router.post('/upsert', (req, res) => {
     });
 });
 
-router.post('/add/hall', (req, res) => {
-    Exam.findByIdAndUpdate(req.query.exam, {$push: {halls: {$each: [req.body], $sort: {name: 1}}}}, {new: true}).then((value) => {
+router.post('/hall/add', (req, res) => {
+    Exam.findByIdAndUpdate(req.query.exam, {
+        $push: {
+            halls: {
+                $each: [req.body],
+                $sort: {name: 1}
+            }
+        }
+    }, {new: true}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
         res.status(400).send(error);
     });
 });
 
-router.patch('/update/hall', (req, res) => {
-    Exam.findByIdAndUpdate(req.query.exam, {$set: {"halls.$[e1]": req.body}}, {arrayFilters:[{"e1._id": req.body._id}], new: true}).then((value) => {
+router.patch('/hall/update', (req, res) => {
+    Exam.findByIdAndUpdate(req.query.exam, {$set: {"halls.$[e1]": req.body}}, {
+        arrayFilters: [{"e1._id": req.body._id}],
+        new: true
+    }).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
         res.status(400).send(error);
@@ -110,7 +120,7 @@ router.patch('/update', (req, res) => {
     });
 });
 
-router.delete('/delete/hall', (req, res) => {
+router.delete('/hall/delete', (req, res) => {
     Exam.findByIdAndUpdate(req.query.exam, {$pull: {halls: {_id: req.query.hall}}}, {new: true}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
