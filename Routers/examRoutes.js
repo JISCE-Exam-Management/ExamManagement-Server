@@ -12,6 +12,7 @@ router.get('/all', (req, res) => {
 });
 
 router.get('/ongoing', (req, res) => {
+    const currentTime = Date.now();
     Exam.find({$and: [{examStartingTime: {$lte: currentTime}}, {examEndingTime: {$gte: currentTime}}]}).then((value) => {
         res.status(200).json(value.sort((a, b) => b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
@@ -20,6 +21,7 @@ router.get('/ongoing', (req, res) => {
 });
 
 router.get('/upcoming', (req, res) => {
+    const currentTime = Date.now();
     Exam.find({examStartingTime: {$gt: currentTime}}).then((value) => {
         res.status(200).json(value.sort((a, b) => b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
@@ -28,6 +30,7 @@ router.get('/upcoming', (req, res) => {
 });
 
 router.get('/completed', (req, res) => {
+    const currentTime = Date.now();
     Exam.find({examEndingTime: {$lt: currentTime}}).then((value) => {
         res.status(200).json(value.sort((a, b) => b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
