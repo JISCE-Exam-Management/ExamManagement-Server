@@ -62,7 +62,11 @@ router.get('/', (req, res) => {
 
 router.post('/insert', (req, res) => {
     Exam.insertMany(req.body.exams).then((value) => {
-        res.status(200).json(value);
+        Exam.find().then((exams)=> {
+            res.status(200).json(exams);
+        }).catch((error)=> {
+            res.status(400).send(error);
+        })
     }).catch((error) => {
         res.status(400).send(error);
     });
