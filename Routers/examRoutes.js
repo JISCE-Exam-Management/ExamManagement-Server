@@ -61,12 +61,9 @@ router.get('/', (req, res) => {
 });
 
 router.post('/insert', (req, res) => {
-    console.log(req.body);
-    console.log(req.body.exams);
     Exam.insertMany(req.body.exams).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        console.log(error);
         res.status(400).send(error);
     });
 });
