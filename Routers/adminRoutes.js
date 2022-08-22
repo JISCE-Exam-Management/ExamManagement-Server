@@ -4,7 +4,7 @@ const Admin = require('../Models/adminModel')
 
 router.get('/all', (req, res)=> {
     Admin.find(req.body, {password: 0}).then((value) => {
-        res.status(200).json(value.sort((a,b) => a.verified - b.verified));
+        res.status(200).json(value);
     }).catch((error) => {
         res.status(400).send(error);
     });
