@@ -6,7 +6,7 @@ router.get('/all', async(req, res) => {
     try {
         res.status(200).json((await Degree.find()).sort((a,b)=> a.degreeName.localeCompare(b.degreeName)));
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -15,7 +15,7 @@ router.get('/', async(req, res) => {
         res.status(200).json(await Degree.findById(req.query.degree));
         await Degree.find()
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -23,7 +23,7 @@ router.post('/add/degree', async(req, res) => {
     try {
         res.status(200).json(await new Degree(req.body).save());
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -32,7 +32,7 @@ router.post('/add/course', async(req, res) => {
         res.status(200).json(await Degree.findByIdAndUpdate(req.query.degree, 
             {$push: {courses: {$each: [req.body], $sort: {courseName: 1}}}}, {new: true}));
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -42,7 +42,7 @@ router.post('/add/stream', async(req, res) => {
             {$push: {"courses.$[e1].streams": {$each: [req.body], $sort: {streamName: 1}}}}, 
             {arrayFilters:[{"e1._id": req.query.course}], new: true}));
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -53,7 +53,7 @@ router.post('/add/regulation', async(req, res) => {
         {arrayFilters: [{"e1._id": req.query.course}, {"e2._id": req.query.stream}], new: true}));
     } catch (error) {
         console.error(error);
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -64,7 +64,7 @@ router.post('/add/semester', async(req, res) => {
         {arrayFilters: [{"e1._id": req.query.course}, {"e2._id": req.query.stream}, {"e3._id": req.query.regulation}], new: true}));
     } catch (error) {
         console.error(error);
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -75,7 +75,7 @@ router.post('/add/paper', async(req, res) => {
         {arrayFilters: [{"e1._id": req.query.course}, {"e2._id": req.query.stream}, {"e3._id": req.query.regulation}, {"e4._id": req.query.semester}], new: true}));
     } catch (error) {
         console.error(error);
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -83,7 +83,7 @@ router.patch('/update', async(req, res) => {
     try {
         res.status(200).json(await Degree.findByIdAndUpdate(req.query.degree, req.body, {new: true}));
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 
@@ -91,7 +91,7 @@ router.delete('/delete', async(req, res) => {
     try {
         res.status(200).json(await Degree.findByIdAndDelete(req.query.degree))
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     }
 });
 

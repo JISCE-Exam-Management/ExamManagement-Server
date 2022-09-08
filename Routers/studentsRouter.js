@@ -6,7 +6,7 @@ router.get('/all', (req, res) => {
     Student.find(req.body).then((value) => {
         res.status(200).json(value.sort((a, b) => parseInt(a.univRoll) - parseInt(b.univRoll)));
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
     Student.findById(req.query.student).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -22,7 +22,7 @@ router.post('/insert', (req, res) => {
     Student.insertMany(req.body.students).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -41,7 +41,7 @@ router.post('/upsert', (req, res) => {
         console.log(value);
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -49,7 +49,7 @@ router.post('/in', (req, res) => {
     Student.find({_id: {$in: req.body.students}}).then((value) => {
         res.status(200).json(value.sort((a, b)=> parseInt(a.univRoll) - parseInt(b.univRoll)));
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -57,7 +57,7 @@ router.patch('/update', (req, res) => {
     Student.findByIdAndUpdate(req.query.student, req.body, { new: true }).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -65,7 +65,7 @@ router.delete('/delete', (req, res) => {
     Student.findByIdAndDelete(req.query.student).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 

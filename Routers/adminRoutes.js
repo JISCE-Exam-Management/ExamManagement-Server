@@ -6,7 +6,7 @@ router.get('/all', (req, res)=> {
     Admin.find(req.body, {password: 0}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -14,7 +14,7 @@ router.get('/', (req, res)=> {
     Admin.findById(req.query.admin, {password: 0}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -24,10 +24,10 @@ router.post('/signup', (req, res) => {
         else new Admin(req.body).save().then((value) => {
             res.status(200).json(value);
         }).catch((error) => {
-            res.status(400).send(error);
+            res.status(400).send(error.message);
         });
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -39,7 +39,7 @@ router.post('/login', (req, res) => {
             } else throw new Error("Incorrect password!");
         } else throw new Error("No admin found!");
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -47,7 +47,7 @@ router.patch('/update', (req, res)=> {
     Admin.findByIdAndUpdate(req.query.admin, req.body, {new: true}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -55,7 +55,7 @@ router.delete('/delete', (req, res)=> {
     Admin.findByIdAndDelete(req.query.admin).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 

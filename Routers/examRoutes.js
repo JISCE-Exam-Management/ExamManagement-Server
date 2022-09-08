@@ -7,7 +7,7 @@ router.get('/all', (req, res) => {
     Exam.find(req.body).then((value) => {
         res.status(200).json(value.sort((a, b) => b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -16,7 +16,7 @@ router.get('/ongoing', (req, res) => {
     Exam.find({$and: [{examStartingTime: {$lte: currentTime}}, {examEndingTime: {$gte: currentTime}}]}).then((value) => {
         res.status(200).json(value.sort((a, b) => b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -25,7 +25,7 @@ router.get('/upcoming', (req, res) => {
     Exam.find({examStartingTime: {$gt: currentTime}}).then((value) => {
         res.status(200).json(value.sort((a, b) => b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -34,7 +34,7 @@ router.get('/completed', (req, res) => {
     Exam.find({examEndingTime: {$lt: currentTime}}).then((value) => {
         res.status(200).json(value.sort((a, b) => b.examStartingTime - a.examStartingTime));
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -45,10 +45,10 @@ router.get('/candidates', (req, res) => {
         Student.find({$and: [{_id: {$nin: studentIds}}, {$or: [{regularPapers: {$elemMatch: exam.paper}}, {backlogPapers: {$elemMatch: exam.paper}}]}]}).then((value) => {
             res.status(200).json(value.sort((a, b) => parseInt(a.univRoll) - parseInt(b.univRoll)));
         }).catch((error) => {
-            res.status(400).send(error);
+            res.status(400).send(error.message);
         });
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -56,7 +56,7 @@ router.get('/', (req, res) => {
     Exam.findById(req.query.exam).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -65,10 +65,10 @@ router.post('/insert', (req, res) => {
         Exam.find().then((exams)=> {
             res.status(200).json(exams);
         }).catch((error)=> {
-            res.status(400).send(error);
+            res.status(400).send(error.message);
         })
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -86,7 +86,7 @@ router.post('/upsert', (req, res) => {
     Student.collection.bulkWrite(operations).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -101,7 +101,7 @@ router.post('/hall/add', (req, res) => {
     }, {new: true}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -112,7 +112,7 @@ router.patch('/hall/update', (req, res) => {
     }).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -120,7 +120,7 @@ router.patch('/update', (req, res) => {
     Exam.findByIdAndUpdate(req.query.exam, req.body, {new: true}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -128,7 +128,7 @@ router.delete('/hall/delete', (req, res) => {
     Exam.findByIdAndUpdate(req.query.exam, {$pull: {halls: {_id: req.query.hall}}}, {new: true}).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
@@ -136,7 +136,7 @@ router.delete('/delete', (req, res) => {
     Exam.findByIdAndDelete(req.query.exam).then((value) => {
         res.status(200).json(value);
     }).catch((error) => {
-        res.status(400).send(error);
+        res.status(400).send(error.message);
     });
 });
 
